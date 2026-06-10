@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 1A – Vocabulario en contexto</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0faf0;
+    color: #000;
+    min-height: 100vh;
+    padding: 2rem 1rem 3rem;
+  }
+
+  .page { max-width: 860px; margin: 0 auto; }
+
+  .page-header {
+    background: #66CC66;
+    border-radius: 12px 12px 0 0;
+    padding: 1.25rem 1.75rem 1rem;
+    border-bottom: 3px solid #3a8a3a;
+  }
+
+  .page-header h1 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #000;
+  }
+
+  .directions {
+    background: #e8f8e8;
+    border-left: 4px solid #66CC66;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    color: #000;
+    margin: 1.25rem 0 1rem;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: #fff;
+    border: 1px solid #c8e6c8;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+  }
+
+  .col-header {
+    background: #66CC66;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 10px 14px;
+    color: #000;
+    text-align: center;
+    border-bottom: 2px solid #3a8a3a;
+  }
+
+  .col-header.spanish { border-right: 2px solid #3a8a3a; }
+
+  .col-list { list-style: none; padding: 8px 0; }
+
+  .col-list.spanish { border-right: 2px solid #c8e6c8; }
+
+  .col-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eef7ee;
+    transition: background 0.12s;
+    user-select: none;
+  }
+
+  .col-list li:last-child { border-bottom: none; }
+  .col-list li:hover { background: #f0fbf0; }
+
+  .col-list li.selected {
+    background: #d0ecd0;
+    font-weight: 600;
+  }
+
+  .col-list li.matched-correct {
+    background: #d4edda !important;
+    color: #000;
+  }
+
+  .col-list li.matched-wrong {
+    background: #fde8e8 !important;
+    color: #000;
+  }
+
+  .col-list li.matched-correct,
+  .col-list li.matched-wrong {
+    pointer-events: none;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #3a8a3a;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s;
+  }
+
+  li.selected .dot,
+  li.matched-correct .dot,
+  li.matched-wrong .dot {
+    background: #3a8a3a;
+  }
+
+  li.matched-wrong .dot { background: #c0392b; border-color: #c0392b; }
+
+  .pair-number {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #3a8a3a;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-style: normal;
+  }
+
+  li.matched-correct .pair-number,
+  li.matched-wrong .pair-number { display: flex; }
+  li.matched-wrong .pair-number { background: #c0392b; }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-submit {
+    background: #66CC66;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 36px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.1s;
+  }
+  .btn-submit:hover { background: #52b252; }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { background: #aaa; cursor: default; }
+
+  .btn-retake {
+    display: none;
+    background: #fff;
+    color: #000;
+    border: 1.5px solid #66CC66;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-retake:hover { background: #e8f8e8; }
+  .btn-retake.show { display: inline-block; }
+
+  .result {
+    display: none;
+    margin-top: 1.25rem;
+    background: #2d6e2d;
+    color: #fff;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+  }
+  .result.show { display: block; }
+  .result .score { font-size: 1.5rem; font-weight: 700; }
+
+  .warn {
+    display: none;
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin-top: 8px;
+  }
+  .warn.show { display: block; }
+
+  .hint {
+    font-size: 0.78rem;
+    color: #3a6a3a;
+    margin-bottom: 0.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <h1>Capítulo 1A &mdash; Vocabulario en contexto</h1>
+  </div>
+
+  <div class="directions">
+    Click a Spanish term, then click its English match. Matched pairs will be highlighted. Complete all 38 pairs, then click Submit.
+  </div>
+
+  <div class="columns">
+    <div class="col-header spanish">Español</div>
+    <div class="col-header english">English</div>
+    <ul class="col-list spanish" id="spanishList"></ul>
+    <ul class="col-list english" id="englishList"></ul>
+  </div>
+
+  <div class="actions">
+    <button class="btn-submit" id="submitBtn" onclick="checkAnswers()">Submit</button>
+    <button class="btn-retake" id="retakeBtn" onclick="retake()">Try again</button>
+  </div>
+  <div class="warn" id="warnMsg"></div>
+  <div class="result" id="result"></div>
+
+</div>
+
+<script>
+const vocab = [
+  ["bailar","to dance"],
+  ["cantar","to sing"],
+  ["correr","to run"],
+  ["dibujar","to draw"],
+  ["escribir cuentos","to write stories"],
+  ["escuchar música","to listen to music"],
+  ["esquiar","to ski"],
+  ["hablar por teléfono","to talk on the phone"],
+  ["ir a la escuela","to go to school"],
+  ["jugar videojuegos","to play video games"],
+  ["leer revistas","to read magazines"],
+  ["montar en bicicleta","to ride a bicycle"],
+  ["montar en monopatín","to skateboard"],
+  ["nadar","to swim"],
+  ["pasar tiempo con amigos","to spend time with friends"],
+  ["patinar","to skate"],
+  ["practicar deportes","to play sports"],
+  ["tocar la guitarra","to play the guitar"],
+  ["trabajar","to work"],
+  ["usar la computadora","to use the computer"],
+  ["ver la tele","to watch television"],
+  ["(A mí) me gusta ___","I like to ___"],
+  ["(A mí) me gusta más ___","I like to ___ better (I prefer to ___)"],
+  ["(A mí) me gusta mucho ___","I like to ___ a lot"],
+  ["A mí también","I do too"],
+  ["(A mí) no me gusta ___","I don't like to ___"],
+  ["(A mí) no me gusta nada ___","I don't like to ___ at all"],
+  ["A mí tampoco","I don't (like to) either"],
+  ["¿Qué te gusta hacer?","What do you like to do?"],
+  ["¿Qué te gusta más?","What do you like better (prefer)?"],
+  ["¿Te gusta ___?","Do you like to ___?"],
+  ["¿Y a ti?","And you?"],
+  ["ni... ni","neither... nor, not... or"],
+  ["o","or"],
+  ["pues...","well..."],
+  ["sí","yes"],
+  ["también","also, too"],
+  ["y","and"]
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// State
+let selectedSpanish = null; // index into vocab
+let selectedEnglish = null; // index into vocab
+let pairs = {}; // spanishIdx -> englishIdx (student's answers)
+let spanishOrder = [];
+let englishOrder = [];
+
+function build() {
+  selectedSpanish = null;
+  selectedEnglish = null;
+  pairs = {};
+
+  spanishOrder = shuffle([...Array(vocab.length).keys()]);
+  englishOrder = shuffle([...Array(vocab.length).keys()]);
+
+  const sList = document.getElementById('spanishList');
+  const eList = document.getElementById('englishList');
+  sList.innerHTML = '';
+  eList.innerHTML = '';
+
+  spanishOrder.forEach(vi => {
+    const li = document.createElement('li');
+    li.dataset.vi = vi;
+    li.innerHTML = `<span class="dot"></span><span class="pair-number"></span><span class="term">${vocab[vi][0]}</span>`;
+    li.onclick = () => clickSpanish(vi);
+    sList.appendChild(li);
+  });
+
+  englishOrder.forEach(vi => {
+    const li = document.createElement('li');
+    li.dataset.vi = vi;
+    li.innerHTML = `<span class="dot"></span><span class="pair-number"></span><span class="term">${vocab[vi][1]}</span>`;
+    li.onclick = () => clickEnglish(vi);
+    eList.appendChild(li);
+  });
+}
+
+function getSpanishLi(vi) {
+  return document.querySelector(`#spanishList li[data-vi="${vi}"]`);
+}
+function getEnglishLi(vi) {
+  return document.querySelector(`#englishList li[data-vi="${vi}"]`);
+}
+
+function isPaired(vi) {
+  return Object.keys(pairs).map(Number).includes(vi);
+}
+function isPairedEnglish(vi) {
+  return Object.values(pairs).includes(vi);
+}
+
+function clearSelection() {
+  if (selectedSpanish !== null) getSpanishLi(selectedSpanish)?.classList.remove('selected');
+  if (selectedEnglish !== null) getEnglishLi(selectedEnglish)?.classList.remove('selected');
+  selectedSpanish = null;
+  selectedEnglish = null;
+}
+
+function clickSpanish(vi) {
+  const li = getSpanishLi(vi);
+  if (li.classList.contains('matched-correct') || li.classList.contains('matched-wrong')) return;
+
+  // If already selected, deselect
+  if (selectedSpanish === vi) { clearSelection(); return; }
+
+  // Deselect previous spanish
+  if (selectedSpanish !== null) getSpanishLi(selectedSpanish)?.classList.remove('selected');
+  selectedSpanish = vi;
+  li.classList.add('selected');
+  tryPair();
+}
+
+function clickEnglish(vi) {
+  const li = getEnglishLi(vi);
+  if (li.classList.contains('matched-correct') || li.classList.contains('matched-wrong')) return;
+
+  if (selectedEnglish === vi) { clearSelection(); return; }
+
+  if (selectedEnglish !== null) getEnglishLi(selectedEnglish)?.classList.remove('selected');
+  selectedEnglish = vi;
+  li.classList.add('selected');
+  tryPair();
+}
+
+let pairCount = 0;
+
+function tryPair() {
+  if (selectedSpanish === null || selectedEnglish === null) return;
+
+  const sVi = selectedSpanish;
+  const eVi = selectedEnglish;
+
+  pairs[sVi] = eVi;
+  pairCount = Object.keys(pairs).length;
+
+  const sLi = getSpanishLi(sVi);
+  const eLi = getEnglishLi(eVi);
+
+  // Mark as matched (styling applied at submit, just mark as paired for now)
+  sLi.classList.remove('selected');
+  eLi.classList.remove('selected');
+  sLi.classList.add('matched-pending');
+  eLi.classList.add('matched-pending');
+  sLi.style.background = '#e8f4e8';
+  eLi.style.background = '#e8f4e8';
+  sLi.style.pointerEvents = 'none';
+  eLi.style.pointerEvents = 'none';
+
+  selectedSpanish = null;
+  selectedEnglish = null;
+}
+
+function checkAnswers() {
+  if (Object.keys(pairs).length < vocab.length) {
+    const remaining = vocab.length - Object.keys(pairs).length;
+    const warn = document.getElementById('warnMsg');
+    warn.textContent = `${remaining} pair${remaining > 1 ? 's' : ''} still unmatched. Complete all pairs before submitting.`;
+    warn.classList.add('show');
+    return;
+  }
+  document.getElementById('warnMsg').classList.remove('show');
+
+  let correct = 0;
+  let pn = 0;
+  Object.entries(pairs).forEach(([sVi, eVi]) => {
+    sVi = Number(sVi);
+    const isCorrect = sVi === eVi; // correct if spanish idx matches english idx (same word)
+    pn++;
+    const sLi = getSpanishLi(sVi);
+    const eLi = getEnglishLi(eVi);
+    sLi.classList.remove('matched-pending');
+    eLi.classList.remove('matched-pending');
+    sLi.style.background = '';
+    eLi.style.background = '';
+    sLi.classList.add(isCorrect ? 'matched-correct' : 'matched-wrong');
+    eLi.classList.add(isCorrect ? 'matched-correct' : 'matched-wrong');
+    sLi.querySelector('.pair-number').textContent = pn;
+    eLi.querySelector('.pair-number').textContent = pn;
+    if (isCorrect) correct++;
+  });
+
+  document.getElementById('submitBtn').disabled = true;
+
+  const total = vocab.length;
+  const pct = Math.round(correct / total * 100);
+  const res = document.getElementById('result');
+  res.innerHTML = `¡Excelente trabajo!&nbsp;&nbsp;<span class="score">${correct} / ${total}</span>&nbsp;&nbsp;(${pct}%)`;
+  res.classList.add('show');
+  document.getElementById('retakeBtn').classList.add('show');
+}
+
+function retake() {
+  pairCount = 0;
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('retakeBtn').classList.remove('show');
+  document.getElementById('warnMsg').classList.remove('show');
+  build();
+}
+
+build();
+</script>
+</body>
+</html>
