@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auténtico 1 – 1A Vocabulary Matching</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green-dark:   #5fcf3a;
+    --green-mid:    #3ea81f;
+    --green-light:  #e8fbe2;
+    --green-accent: #4db82e;
+    --white:        #ffffff;
+    --off-white:    #f5fdf2;
+    --text-dark:    #1a3a0a;
+    --text-mid:     #2a4a15;
+    --amber:        #f0a500;
+    --amber-light:  #fff8e0;
+    --amber-text:   #a06000;
+
+    /* secondary accent — used sparingly for progress, score, achievement */
+    --gold:         #e8b923;
+    --gold-light:   #fdf3da;
+    --gold-dark:    #a8780c;
+
+    --red:          #cc3b3b;
+    --red-light:    #fdeceb;
+
+    /* refined, professional shadow system (cool dark-green tint) */
+    --shadow:       rgba(20,45,10,0.10);
+    --shadow-hover: rgba(20,45,10,0.20);
+    --shadow-lg:    0 20px 50px rgba(20,45,10,0.22);
+
+    --radius-sm:    16px;
+    --radius:       18px;
+    --radius-lg:    26px;
+
+    --font-heading: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
+  }
+
+  body {
+    position: relative;
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    background: var(--off-white);
+    color: var(--text-dark);
+    min-height: 100vh;
+    padding: 18px 16px 48px;
+  }
+
+  /* Very subtle geometric texture (~3% opacity) — purely decorative,
+     sits behind all content and never interferes with readability */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cpath d='M32 4L60 32L32 60L4 32Z' fill='none' stroke='%233ea81f' stroke-width='1.4'/%3E%3C/svg%3E");
+    background-size: 64px 64px;
+  }
+
+  /* ── HERO HEADER ── */
+  header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--green-mid) 0%, var(--green-dark) 55%, var(--green-mid) 100%);
+    color: var(--white);
+    text-align: center;
+    padding: 38px 24px 32px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+  /* very low-opacity geometric overlay — professional, not distracting */
+  .hero-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 6L74 40L40 74L6 40Z' fill='none' stroke='%23ffffff' stroke-width='1.3'/%3E%3C/svg%3E");
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+  .hero-kicker {
+    position: relative;
+    z-index: 1;
+    font-family: 'Poppins', var(--font-heading);
+    font-size: 1.56rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 8px;
+  }
+  header h1 {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 4.2vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    line-height: 1.18;
+  }
+  header p {
+    position: relative;
+    z-index: 1;
+    margin-top: 10px;
+    font-size: clamp(0.82rem, 2vw, 1rem);
+    color: var(--green-light);
+    font-weight: 400;
+  }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px 0;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .stat-box {
+    background: var(--white);
+    border: 1.5px solid var(--green-light);
+    border-radius: var(--radius-sm);
+    padding: 10px 20px;
+    text-align: center;
+    box-shadow: 0 4px 14px var(--shadow);
+    min-width: 120px;
+  }
+  .stat-box--accent { border-color: var(--gold-light); }
+  .stat-box--accent .stat-value { color: var(--gold-dark); }
+  .stat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--green-dark);
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1;
+  }
+
+  /* ── MATCHING CARD ── */
+  .match-card {
+    background: var(--white);
+    border: 1.5px solid var(--green-light);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 22px var(--shadow);
+    padding: 22px;
+    margin-bottom: 18px;
+  }
+
+  .instructions-box {
+    background: var(--white);
+    border: 1.5px solid var(--green-light);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 22px var(--shadow);
+    padding: 14px 22px;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+  .instructions {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text-dark);
+  }
+
+  /* ── MATCHING GRID ── */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 18px;
+  }
+
+  .col-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--green-dark);
+    padding: 0 4px 6px;
+    border-bottom: 2px solid var(--green-light);
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  /* ── TERM TILES ── */
+  .term-btn {
+    display: block;
+    width: 100%;
+    font-family: inherit;
+    font-size: clamp(0.78rem, 1.8vw, 0.92rem);
+    font-weight: 700;
+    color: var(--text-dark);
+    background: var(--white);
+    border: 1.5px solid var(--green-dark);
+    border-radius: var(--radius-sm);
+    padding: 9px 14px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.35;
+    position: relative;
+    box-shadow: 0 3px 10px var(--shadow);
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s, box-shadow 0.15s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    animation: tilePop 0.15s ease both;
+  }
+  @keyframes tilePop {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .term-btn:hover:not(:disabled) {
+    background: var(--green-light);
+    border-color: var(--green-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px var(--shadow-hover);
+  }
+  .term-btn:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  /* SELECTED state */
+  .term-btn.selected {
+    background: var(--green-light);
+    border-color: var(--green-dark);
+    color: var(--green-dark);
+    font-weight: 700;
+  }
+
+  /* PAIRED state (matched pair shown visually) */
+  .term-btn.paired {
+    background: var(--green-light);
+  }
+
+  /* CORRECT after submit */
+  .term-btn.correct {
+    background: #d4f5c8;
+    border-color: var(--green-dark);
+    color: var(--text-dark);
+    font-weight: 700;
+    cursor: default;
+  }
+
+  /* INCORRECT after submit — Spanish only */
+  .term-btn.incorrect {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+    font-weight: 700;
+    cursor: default;
+  }
+
+  .term-btn:disabled { cursor: default; }
+
+  /* ── FEEDBACK / SCORE MESSAGE ── */
+  .feedback {
+    display: none;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: #d4f5c8;
+    color: var(--green-mid);
+    border: 1.5px solid var(--green-dark);
+    box-shadow: 0 4px 14px var(--shadow);
+    animation: feedbackPop 0.35s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  }
+  @keyframes feedbackPop {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+  .feedback-check {
+    display: inline-block;
+    color: var(--gold-dark);
+    margin-right: 4px;
+  }
+  .feedback.tryagain {
+    background: var(--white);
+    border: 1.5px solid var(--red-light);
+    border-left: 6px solid var(--red);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 14px var(--shadow);
+    text-align: left;
+    padding: 16px 18px;
+  }
+  .feedback strong { color: var(--text-dark); }
+
+  /* ── BUTTON ROW ── */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .btn {
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--green-dark);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.1s, box-shadow 0.15s;
+    outline-offset: 3px;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow-hover); }
+  .btn:focus-visible { outline: 3px solid var(--green-accent); }
+  .btn:disabled { opacity: 0.45; cursor: default; transform: none; box-shadow: none; }
+  .btn-primary   { background: var(--green-dark); color: var(--white); }
+  .btn-primary:hover:not(:disabled) { background: var(--green-mid); }
+  .btn-secondary { background: var(--white); color: var(--green-dark); }
+  .btn-secondary:hover:not(:disabled) { background: var(--green-light); }
+
+  /* ── COMPLETION MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.48);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.visible { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 40px 36px 32px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.22);
+    animation: modalPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes modalPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+
+  .modal-emoji  { font-size: 3rem; margin-bottom: 10px; }
+  .modal-title  {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+    margin-bottom: 6px;
+  }
+  .modal-subtitle { font-size: 1rem; color: var(--text-mid); margin-bottom: 24px; line-height: 1.5; }
+
+  .modal-stats {
+    background: var(--gold-light);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+  .modal-stat-label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--gold-dark); margin-bottom: 4px;
+  }
+  .modal-stat-value { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--gold-dark); }
+
+  .modal-btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .no-select { user-select: none; }
+
+  /* Responsive */
+  @media (max-width: 520px) {
+    .match-grid { gap: 8px 10px; }
+    .term-btn { font-size: 0.75rem; padding: 8px 10px; }
+    .match-card { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header role="banner">
+  <div class="hero-pattern" aria-hidden="true"></div>
+  <div class="hero-kicker">Auténtico 1 &middot; Capítulo 1A</div>
+  <h1>Vocabulary Matching</h1>
+  <p>Match the Spanish terms with the corresponding English terms</p>
+</header>
+
+<main class="container" role="main">
+
+  <div class="stats-bar" id="stats-bar" style="display:none">
+    <div class="stat-box stat-box--accent">
+      <div class="stat-label">Score</div>
+      <div class="stat-value" id="stat-score">0 / 37</div>
+    </div>
+  </div>
+
+  <div class="instructions-box">
+    <div class="instructions">Click a Spanish term, then click its English match</div>
+  </div>
+
+  <div class="match-card">
+    <div class="match-grid" id="match-grid">
+      <!-- Column headers -->
+      <div class="col-header">Spanish</div>
+      <div class="col-header">English</div>
+      <!-- Terms injected by JS -->
+    </div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="submit-btn" disabled>Submit</button>
+    <button class="btn btn-secondary" id="redo-btn">↺ Redo</button>
+  </div>
+
+</main>
+
+<!-- ── COMPLETION MODAL ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-emoji">🏆</div>
+    <div class="modal-title" id="modal-title">Nice work!</div>
+    <div class="modal-subtitle">Capítulo 1A &ndash; Vocabulary Matching</div>
+    <div class="modal-stats">
+      <div>
+        <div class="modal-stat-label">Score</div>
+        <div class="modal-stat-value" id="modal-score">0 / 37</div>
+      </div>
+    </div>
+    <div class="modal-btn-row">
+      <button class="btn btn-primary" id="modal-redo-btn">↺ Try Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const VOCAB = [
+  ["bailar","to dance"],
+  ["cantar","to sing"],
+  ["correr","to run"],
+  ["dibujar","to draw"],
+  ["escribir cuentos","to write stories"],
+  ["escuchar música","to listen to music"],
+  ["esquiar","to ski"],
+  ["hablar por teléfono","to talk on the phone"],
+  ["ir a la escuela","to go to school"],
+  ["jugar videojuegos","to play video games"],
+  ["leer revistas","to read magazines"],
+  ["montar en bicicleta","to ride a bicycle"],
+  ["montar en monopatín","to skateboard"],
+  ["nadar","to swim"],
+  ["pasar tiempo con amigos","to spend time with friends"],
+  ["patinar","to skate"],
+  ["practicar deportes","to play sports"],
+  ["tocar la guitarra","to play the guitar"],
+  ["trabajar","to work"],
+  ["usar la computadora","to use the computer"],
+  ["ver la tele","to watch television"],
+  ["A mí me gusta","I like to"],
+  ["A mí me gusta más","I like to ___ better"],
+  ["A mí me gusta mucho","I like to ___ a lot"],
+  ["A mí también","I do too"],
+  ["A mí no me gusta","I don't like to"],
+  ["A mí no me gusta nada","I don't like to ___ at all"],
+  ["A mí tampoco","I don't like to either"],
+  ["¿Qué te gusta hacer?","What do you like to do?"],
+  ["¿Qué te gusta más?","What do you like better?"],
+  ["¿Te gusta ___?","Do you like to ___?"],
+  ["¿Y a ti?","And you?"],
+  ["ni . . . ni","neither . . . nor / not . . . or"],
+  ["o","or"],
+  ["pues","well"],
+  ["sí","yes"],
+  ["también","also / too"],
+  ["y","and"]
+];
+
+const grid = document.getElementById('match-grid');
+const statsBar = document.getElementById('stats-bar');
+const statScore = document.getElementById('stat-score');
+const feedback = document.getElementById('feedback');
+const submitBtn = document.getElementById('submit-btn');
+const redoBtn = document.getElementById('redo-btn');
+const modalOverlay = document.getElementById('modal-overlay');
+const modalScore = document.getElementById('modal-score');
+const modalTitle = document.getElementById('modal-title');
+const modalRedoBtn = document.getElementById('modal-redo-btn');
+
+let spanishOrder = [], englishOrder = [];
+let selectedSpanish = null, selectedEnglish = null;
+let pairs = {}; // spanishIndex -> englishIndex
+let submitted = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function init() {
+  submitted = false;
+  selectedSpanish = null;
+  selectedEnglish = null;
+  pairs = {};
+  statsBar.style.display = 'none';
+  feedback.className = 'feedback';
+  feedback.innerHTML = '';
+  submitBtn.disabled = true;
+  submitBtn.style.display = 'inline-block';
+  modalOverlay.classList.remove('visible');
+
+  spanishOrder = shuffle(VOCAB.map((_, i) => i));
+  englishOrder = shuffle(VOCAB.map((_, i) => i));
+
+  renderGrid();
+}
+
+function renderGrid() {
+  // Keep the two col-header divs, replace the rest
+  const headers = grid.querySelectorAll('.col-header');
+  grid.innerHTML = '';
+  headers.forEach(h => grid.appendChild(h.cloneNode(true)));
+
+  spanishOrder.forEach((vocabIdx, row) => {
+    const btn = document.createElement('button');
+    btn.className = 'term-btn';
+    btn.dataset.side = 'spanish';
+    btn.dataset.row = row;
+    btn.dataset.vocabIdx = vocabIdx;
+    btn.textContent = VOCAB[vocabIdx][0];
+    btn.addEventListener('click', onTermClick);
+    grid.appendChild(btn);
+
+    // English counterpart for same row
+    const eVocabIdx = englishOrder[row];
+    const ebtn = document.createElement('button');
+    ebtn.className = 'term-btn';
+    ebtn.dataset.side = 'english';
+    ebtn.dataset.row = row;
+    ebtn.dataset.vocabIdx = eVocabIdx;
+    ebtn.textContent = VOCAB[eVocabIdx][1];
+    ebtn.addEventListener('click', onTermClick);
+    grid.appendChild(ebtn);
+  });
+}
+
+function getBtn(side, row) {
+  return grid.querySelector(`.term-btn[data-side="${side}"][data-row="${row}"]`);
+}
+
+function clearSelection() {
+  if (selectedSpanish !== null) {
+    const b = getBtn('spanish', selectedSpanish);
+    if (b) b.classList.remove('selected');
+  }
+  if (selectedEnglish !== null) {
+    const b = getBtn('english', selectedEnglish);
+    if (b) b.classList.remove('selected');
+  }
+  selectedSpanish = null;
+  selectedEnglish = null;
+}
+
+// Find which spanish row has been matched to the given english row
+function findSpanishRowForEnglish(eRow) {
+  for (const [sRow, eIdx] of Object.entries(pairs)) {
+    if (Number(eIdx) === Number(eRow)) return Number(sRow);
+  }
+  return null;
+}
+
+function updateBadges() {
+  // Clear paired state from all tiles, then re-apply to current pairs
+  grid.querySelectorAll('.term-btn.paired').forEach(b => b.classList.remove('paired'));
+
+  Object.entries(pairs).forEach(([sRow, eRow]) => {
+    const sb = getBtn('spanish', sRow);
+    const eb = getBtn('english', eRow);
+    sb?.classList.add('paired');
+    eb?.classList.add('paired');
+  });
+}
+
+function onTermClick(e) {
+  if (submitted) return;
+  const btn = e.currentTarget;
+  const side = btn.dataset.side;
+  const row = Number(btn.dataset.row);
+
+  if (side === 'spanish') {
+    if (selectedSpanish === row) {
+      clearSelection();
+      return;
+    }
+    if (row in pairs) {
+      const oldERow = pairs[row];
+      delete pairs[row];
+      getBtn('english', oldERow)?.classList.remove('paired');
+      updateBadges();
+    }
+    if (selectedSpanish !== null) {
+      getBtn('spanish', selectedSpanish)?.classList.remove('selected');
+    }
+    selectedSpanish = row;
+    btn.classList.add('selected');
+
+  } else {
+    if (selectedEnglish === row) {
+      clearSelection();
+      return;
+    }
+    const existingS = findSpanishRowForEnglish(row);
+    if (existingS !== null) {
+      delete pairs[existingS];
+      getBtn('spanish', existingS)?.classList.remove('paired');
+      updateBadges();
+    }
+    if (selectedEnglish !== null) {
+      getBtn('english', selectedEnglish)?.classList.remove('selected');
+    }
+    selectedEnglish = row;
+    btn.classList.add('selected');
+  }
+
+  // If both selected, make a pair
+  if (selectedSpanish !== null && selectedEnglish !== null) {
+    pairs[selectedSpanish] = selectedEnglish;
+    getBtn('spanish', selectedSpanish)?.classList.remove('selected');
+    getBtn('english', selectedEnglish)?.classList.remove('selected');
+    selectedSpanish = null;
+    selectedEnglish = null;
+    updateBadges();
+    submitBtn.disabled = Object.keys(pairs).length < VOCAB.length;
+  }
+}
+
+function showResult(correct) {
+  const total = VOCAB.length;
+  statsBar.style.display = 'flex';
+  statScore.textContent = `${correct} / ${total}`;
+
+  if (correct === total) {
+    feedback.className = 'feedback show correct';
+    feedback.innerHTML = '<span class="feedback-check">✓</span> Excellent! All matches correct.';
+  } else {
+    feedback.className = 'feedback show tryagain';
+    feedback.innerHTML = `<div class="not-quite-heading" style="font-family:var(--font-heading);font-size:0.95rem;font-weight:800;color:var(--red);margin-bottom:8px;">Not quite there yet</div><div style="font-size:1rem;color:var(--text-dark);line-height:1.5;">You matched <strong>${correct} of ${total}</strong> correctly. Review the items marked in red and try again.</div>`;
+  }
+
+  modalTitle.textContent = correct === total ? 'Excellent!' : 'Nice effort!';
+  modalScore.textContent = `${correct} / ${total}`;
+}
+
+submitBtn.addEventListener('click', () => {
+  if (submitted) return;
+  submitted = true;
+  submitBtn.disabled = true;
+  submitBtn.style.display = 'none';
+
+  let correct = 0;
+  spanishOrder.forEach((vocabIdx, sRow) => {
+    const eRow = pairs[sRow];
+    const sb = getBtn('spanish', sRow);
+
+    if (eRow === undefined) {
+      if (sb) { sb.classList.remove('paired','selected'); sb.classList.add('incorrect'); }
+      return;
+    }
+
+    const eb = getBtn('english', eRow);
+    const eVocabIdx = Number(eb?.dataset.vocabIdx);
+    const isCorrect = eVocabIdx === vocabIdx;
+
+    sb?.classList.remove('paired','selected');
+    eb?.classList.remove('paired','selected');
+
+    if (isCorrect) {
+      correct++;
+      sb?.classList.add('correct');
+      eb?.classList.add('correct');
+    } else {
+      sb?.classList.add('incorrect');
+      eb?.classList.add('paired'); // English stays neutral — does not reveal correct answer
+    }
+  });
+
+  showResult(correct);
+
+  // Disable all buttons
+  grid.querySelectorAll('.term-btn').forEach(b => b.disabled = true);
+
+  setTimeout(() => modalOverlay.classList.add('visible'), 500);
+});
+
+redoBtn.addEventListener('click', init);
+modalRedoBtn.addEventListener('click', init);
+
+init();
+</script>
+
+<footer style="max-width:720px;margin:32px auto 0;padding:14px 16px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:0.68rem;line-height:1.5;color:#8a9a82;border-top:1px solid #e8fbe2;">
+  &copy; 2026 GMKTutoring. All Rights Reserved.<br>
+  <strong>Single Teacher License</strong><br>
+  This resource is licensed for use by one teacher. Students of the purchasing teacher may access and use this resource for classroom instruction.<br>
+  Sharing, redistribution, resale, posting online, or providing access to non-enrolled students is prohibited.
+</footer>
+</body>
+</html>
